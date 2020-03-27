@@ -8,25 +8,21 @@ import org.hibernate.validator.constraints.UniqueElements;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
+@Data
 @Entity
-@DynamicUpdate
+@Table(uniqueConstraints={@UniqueConstraint(columnNames = {"username" , "email"})})
 public class Employee {
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Long id;
 
-    @NaturalId
-    @Column(name = "username", nullable = false, unique = true)
+    @NotNull
     private String username;
     private String password;
     private String firstName;
     private String lastName;
+
+    @NotNull
     private String email;
     private float salary;
     private String image;

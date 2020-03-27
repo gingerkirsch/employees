@@ -21,6 +21,7 @@ public class EmployeeService {
     }
 
     public void save(Employee employee){
+        // I do not know why, but this generates inserts only!! still can't get why
         repo.save(employee);
     }
 
