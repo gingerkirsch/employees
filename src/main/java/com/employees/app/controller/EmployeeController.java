@@ -2,14 +2,15 @@ package com.employees.app.controller;
 
 import com.employees.app.model.Employee;
 import com.employees.app.service.EmployeeService;
+import com.employees.app.service.FileStorageService;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -17,6 +18,9 @@ import java.util.List;
 public class EmployeeController {
     @Autowired
     private EmployeeService service;
+
+    @Autowired
+    private FileStorageService storage;
 
     @RequestMapping("/")
     public String viewHomePage(Model model) {
@@ -52,5 +56,20 @@ public class EmployeeController {
         Employee employee = service.getByUsername(username);
         service.delete(employee.getId());
         return "redirect:/";
+    }
+
+    @SneakyThrows
+    @RequestMapping("/photo/{username}")
+    public ModelAndView editEmployeeForm(
+            @PathVariable(name="username") String username,
+            @RequestParam(name="json", required = true) String json,
+            @RequestParam(required = true, value = "file")MultipartFile file) {
+        String fileName = storage.storeFile(file);
+        String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("uploads").path(fileName).toUriString();
+        ModelAndView mav = new ModelAndView("upload_image");
+        Employee employee = service.getByUsername(username);
+        employee.setImage(fileUri);
+        mav.addObject("employee", employee);
+        return mav;
     }
 }

@@ -25,6 +25,6 @@ public class Employee {
     @NotNull
     private String email;
     private float salary;
-    private String image;
+    private String image = "uploads/no-image.jpg";
 
 }
